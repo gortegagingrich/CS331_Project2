@@ -1,5 +1,5 @@
 TODO:
-	[] implement mergesort for algorithm 1
+	[x] implement mergesort for algorithm 1
 	[] make algorithms 2 and 3 objectively worse (recursive)
 	[] have output formated in a way that can be easily (read: lazily) parsed (maybe as a json formated string)
 	[] write a program or subprogram to interpret the results
