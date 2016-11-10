@@ -20,9 +20,7 @@ int algorithm1 (int* arr, int length, int k) {
 	start = clock();
 	quicksort(arr,0,length-1);
 	out = arr[k];
-	end = clock();
-
-	printf("Ran for %f seconds\n", (float)(end - start) / 1000000.0 );
+	calcTime(start,clock());
 
 	return out;
 }
@@ -146,34 +144,52 @@ void fillArr(int* list, int length) {
 
 // misc
 void calcTime(clock_t start, clock_t end) {
-	printf("Ran for %f seconds\n", (float)(end - start) / 1000000.0 );
+	printf("%f\n", (float)(end - start) / 1000000.0 );
 }
 
 // main function
-int main() {
-	int i;
+int main(int argc, char **argv) {
+	int i, j, numTimes, maxN, k;
 	clock_t seed;
 
-	for (i = 10; i <= 100000000; i *= 10) {
-		int* list;
-		list = malloc(sizeof(int) * i);
-		seed = clock();
+	numTimes = atoi(argv[1]);
+	maxN = atoi(argv[2]);
 
-		srand(1);
-		fillArr(list,i);
-		printf("Algorithm1\n");
-		printf("n: %d\nK: %d\nKth: %d\n", i, i/4, algorithm1(list,i, i/4));
+	if (argc == 3) {
+		for (i = 10; i <= maxN; i *= 10) {
+			printf("N: %d\n", i);
 
-		srand(1);
-		fillArr(list,i);
-		printf("Algorithm2\n");
-		printf("n: %d\nK: %d\nKth: %d\n", i, i/4, algorithm2(list,i, i/4));
+			for (k = 1; k <= 4; k++) {
+				printf("K: %.2f\n", (k / 4.));
 
-		srand(1);
-		fillArr(list,i);
-		printf("Algorithm3\n");
-		printf("n: %d\nK: %d\nKth: %d\n\n", i, i/4, algorithm3(list,i, i/4));
+				for (j = 0; j < numTimes; j++) {
+					int* list;
+					list = malloc(sizeof(int) * i);
+					seed = clock();
 
-		free(list);
+					srand(seed);
+					fillArr(list,i);
+					printf("Algorithm1: ");
+					algorithm1(list,i, k*(i-1)/4);
+					//printf("n: %d\nK: %d\nKth: %d\n", i, i/4, algorithm1(list,i, i/4));
+
+					srand(seed);
+					fillArr(list,i);
+					printf("Algorithm2: ");
+					algorithm2(list,i, k*(i-1)/4);
+					//printf("n: %d\nK: %d\nKth: %d\n", i, i/4, algorithm2(list,i, i/4));
+
+					srand(seed);
+					fillArr(list,i);
+					printf("Algorithm3: ");
+					algorithm3(list,i, k*(i-1)/4);
+					//printf("n: %d\nK: %d\nKth: %d\n\n", i, i/4, algorithm3(list,i, i/4));
+
+					free(list);
+				}
+			}
+
+			printf("\n");
+		}
 	}
 }
