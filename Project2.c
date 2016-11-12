@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdint.h>
 
 void mergesort(short*,int,int);
 void merge(short*,short*,int,short*,int);
 int partition(short*,int,int);
 void swap(short*, short*);
 void printArr(short*, int);
-void fillArr(short*, int);
+void fillArr(short*, unsigned int);
 void calcTime(clock_t, clock_t);
 
 clock_t seed;
@@ -167,8 +168,8 @@ void printArr(short* list, int length) {
 	printf("\n");
 }
 
-void fillArr(short* list, int length) {
-	int i;
+void fillArr(short* list, unsigned int length) {
+	unsigned int i;
 
 	for (i = 0; i < length; i++) {
 		list[i] = rand() % (length * 3);
@@ -180,10 +181,10 @@ void calcTime(clock_t start, clock_t end) {
 	printf("%f\n", (float)(end - start) / 1000000.0 );
 }
 
-void performTest(int algNumber, short* list, uint n, uint k) {
+void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	srand(seed);
 	fillArr(list,n);
-	printf("Algorithm%d:\n", algNumber);
+	printf("Algorithm%d:", algNumber);
 
 	switch (algNumber) {
 		case 1:
@@ -201,7 +202,7 @@ void performTest(int algNumber, short* list, uint n, uint k) {
 // main function
 int main(int argc, char **argv) {
 	// i and maxN need to be unsigned to prevent segfaults caused by overflows
-	uint i, maxN;
+	unsigned int i, maxN;
 	int j, numTimes, k, l;
 
 	numTimes = atoi(argv[1]);
