@@ -4,6 +4,7 @@
 
 void mergesort(short*,int,int);
 void merge(short*,short*,int,short*,int);
+int partition(short*,int,int);
 void swap(short*, short*);
 void printArr(short*, int);
 void fillArr(short*, int);
@@ -182,7 +183,7 @@ void calcTime(clock_t start, clock_t end) {
 void performTest(int algNumber, short* list, uint n, uint k) {
 	srand(seed);
 	fillArr(list,n);
-	printf("\t\tAlgorithm %d: ", algNumber);
+	printf("Algorithm%d:\n", algNumber);
 
 	switch (algNumber) {
 		case 1:
@@ -209,14 +210,14 @@ int main(int argc, char **argv) {
 
 	if (argc == 3) {
 		for (i = 10; i <= maxN; i *= 10) {
-			printf("N: %d\n", i);
+			printf("N:%d\n", i);
 
 			short* list;
 			list = malloc(sizeof(short) * i);
 
 			for (j = 0; j < numTimes; j++) {
 				for (k = 0; k <= 4; k++) {
-					printf("\tK: %d\n", (k == 0 ? 1 : (i * k / 4)));
+					printf("K:%d\n", (k == 0 ? 1 : (i * k / 4)));
 
 					for (l = 1; l <= 3; l++) {
 						performTest(l,list,i,k);
