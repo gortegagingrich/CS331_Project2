@@ -11,6 +11,8 @@ void printArr(short*, int);
 void fillArr(short*, unsigned int);
 void calcTime(clock_t, clock_t);
 
+int algorithm2Rec_rec(short*,int,int,int,int);
+
 clock_t seed;
 
 // Project specific algorithms
@@ -57,6 +59,32 @@ int algorithm2(short* arr, int length, int k) {
 	calcTime(start,clock());
 
 	return out;
+}
+
+/* Recursive implementation of Algorithm 2 */
+int algorithm2Rec_init(short* arr, int length, int k) {
+	clock_t start;
+	int out;
+
+	start = clock();
+	out = algorithm2Rec_rec(arr, length, k, 0,length - 1);
+	calcTime(start,clock());
+
+	return out;
+}
+
+int algorithm2Rec_rec(short* arr, int length, int k, int a, int b) {
+	int pivot, out;
+
+	pivot = partition(arr,a,b);
+
+	if (pivot == k) {
+		return arr[pivot];
+	} else if (pivot < k) {
+		return(algorithm2Rec_rec(arr, length, k, pivot + 1, b));
+	} else {
+		return(algorithm2Rec_rec(arr, length, k, a, pivot - 1));
+	}
 }
 
 /* Algorithm 3 is almost exactly the same as algorithm 2.
@@ -194,6 +222,9 @@ void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 			algorithm2(list, n, k*(n-1)/4);
 			break;
 		case 3:
+			algorithm2Rec_init(list, n, k*(n-1)/4);
+			break;
+		case 4:
 			algorithm3(list, n, k*(n-1)/4);
 			break;
 	}
@@ -218,9 +249,9 @@ int main(int argc, char **argv) {
 
 			for (j = 0; j < numTimes; j++) {
 				for (k = 0; k <= 4; k++) {
-					printf("K:%d\n", (k == 0 ? 1 : (i * k / 4)));
+					printf("K:%.2f\n", (k == 0 ? 0 : (k / 4.)));
 
-					for (l = 1; l <= 3; l++) {
+					for (l = 1; l <= 4; l++) {
 						performTest(l,list,i,k);
 					}
 				}
