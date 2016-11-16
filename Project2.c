@@ -7,11 +7,12 @@ void mergesort(short*,int,int);
 void merge(short*,short*,int,short*,int);
 int partition(short*,int,int);
 void swap(short*, short*);
-void printArr(short*, int);
 void fillArr(short*, unsigned int);
 void calcTime(clock_t, clock_t);
-
 int algorithm2Rec_rec(short*,int,int,int,int);
+
+// this program does not support values of N larger than this
+const unsigned int MAX_N = 0x7FFFFFFF;
 
 clock_t seed;
 
@@ -137,14 +138,14 @@ void mergesort(short* arr, int a, int b) {
 	}
 }
 
-void merge(short* arr, short* left, int leftLength, short*right, int rightLength) {
+void merge(short* arr, short* left, int lLength, short*right, int rLength) {
 	int i,j,k;
 
 	i = 0;
 	j = 0;
 	k = 0;
 
-	while (i < leftLength && j < rightLength) {
+	while (i < lLength && j < rLength) {
 		if (left[i] < right[j]) {
 			arr[k++] = left[i++];
 		} else {
@@ -152,11 +153,11 @@ void merge(short* arr, short* left, int leftLength, short*right, int rightLength
 		}
 	}
 
-	for (;i < leftLength; i++) {
+	for (;i < lLength; i++) {
 		arr[k++] = left[i];
 	}
 
-	for (;j < rightLength; j++) {
+	for (;j < rLength; j++) {
 		arr[k++] = right[j];
 	}
 }
@@ -185,15 +186,6 @@ void swap(short* a, short* b) {
 	temp = *a;
 	*a = *b;
 	*b = temp;
-}
-
-void printArr(short* list, int length) {
-	int i;
-
-	for (i = 0; i < length; i++) {
-		printf("%d ",list[i]);
-	}	
-	printf("\n");
 }
 
 void fillArr(short* list, unsigned int length) {
@@ -230,6 +222,30 @@ void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	}
 }
 
+void iterateTests(int start, int maxN, int numTimes) {
+	int i, j, k, l;
+
+	for (i = start; i <= maxN && i <= MAX_N; i *= 10) {
+		printf("N:%d\n", i);
+
+		short* list;
+		list = malloc(sizeof(short) * i);
+
+		for (j = 0; j < numTimes; j++) {
+			for (k = 0; k <= 4; k++) {
+				printf("K:%.2f\n", (k == 0 ? 0 : (k / 4.)));
+
+				for (l = 1; l <= 4; l++) {
+					performTest(l,list,i,k);
+				}
+			}
+		}
+
+		free(list);
+		printf("\n");
+	}
+}
+
 // main function
 int main(int argc, char **argv) {
 	// i and maxN need to be unsigned to prevent segfaults caused by overflows
@@ -240,25 +256,7 @@ int main(int argc, char **argv) {
 	maxN = atoi(argv[2]);
 	seed = clock();
 
-	if (argc == 3) {
-		for (i = 10; i <= maxN; i *= 10) {
-			printf("N:%d\n", i);
-
-			short* list;
-			list = malloc(sizeof(short) * i);
-
-			for (j = 0; j < numTimes; j++) {
-				for (k = 0; k <= 4; k++) {
-					printf("K:%.2f\n", (k == 0 ? 0 : (k / 4.)));
-
-					for (l = 1; l <= 4; l++) {
-						performTest(l,list,i,k);
-					}
-				}
-			}
-
-			free(list);
-			printf("\n");
-		}
-	}
+	iterateTests(250,maxN, numTimes);
+	iterateTests(10,maxN, numTimes);
+	iterateTests(50,maxN, numTimes);
 }
