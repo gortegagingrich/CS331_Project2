@@ -198,13 +198,13 @@ void fillArr(short* list, unsigned int length) {
 
 // misc
 void calcTime(clock_t start, clock_t end) {
-	printf("%f\n", (float)(end - start) / 1000000.0 );
+	printf(":%f\n", (float)(end - start) / 1000000.0 );
 }
 
 void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	srand(seed);
 	fillArr(list,n);
-	printf("Algorithm%d:", algNumber);
+	printf(":Algorithm%d", algNumber);
 
 	switch (algNumber) {
 		case 1:
@@ -226,23 +226,20 @@ void iterateTests(int start, int maxN, int numTimes) {
 	int i, j, k, l;
 
 	for (i = start; i <= maxN && i <= MAX_N; i *= 10) {
-		printf("N:%d\n", i);
 
 		short* list;
 		list = malloc(sizeof(short) * i);
 
 		for (j = 0; j < numTimes; j++) {
 			for (k = 0; k <= 4; k++) {
-				printf("K:%.2f\n", (k == 0 ? 0 : (k / 4.)));
-
 				for (l = 1; l <= 4; l++) {
+				  printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
 					performTest(l,list,i,k);
 				}
 			}
 		}
 
 		free(list);
-		printf("\n");
 	}
 }
 
