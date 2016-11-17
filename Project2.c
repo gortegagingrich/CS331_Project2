@@ -233,7 +233,7 @@ void iterateTests(int start, int maxN, int numTimes) {
 		for (j = 0; j < numTimes; j++) {
 			for (k = 0; k <= 4; k++) {
 				for (l = 1; l <= 4; l++) {
-				  printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
+					printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
 					performTest(l,list,i,k);
 				}
 			}
