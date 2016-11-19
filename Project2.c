@@ -204,7 +204,7 @@ void calcTime(clock_t start, clock_t end) {
 void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	srand(seed);
 	fillArr(list,n);
-	printf(":Algorithm%d", algNumber);
+	printf("-Algorithm%d", algNumber);
 
 	switch (algNumber) {
 		case 1:
@@ -222,8 +222,8 @@ void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	}
 }
 
-void iterateTests(int start, int maxN, int numTimes) {
-	int i, j, k, l;
+void iterateTests(int start, int maxN, int k, int numTimes) {
+	int i, j, l;
 
 	for (i = start; i <= maxN && i <= MAX_N; i *= 10) {
 
@@ -231,11 +231,9 @@ void iterateTests(int start, int maxN, int numTimes) {
 		list = malloc(sizeof(short) * i);
 
 		for (j = 0; j < numTimes; j++) {
-			for (k = 0; k <= 4; k++) {
-				for (l = 1; l <= 4; l++) {
-					printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
-					performTest(l,list,i,k);
-				}
+			for (l = 1; l <= 4; l++) {
+				printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
+				performTest(l,list,i,k);
 			}
 		}
 
@@ -252,8 +250,11 @@ int main(int argc, char **argv) {
 	numTimes = atoi(argv[1]);
 	maxN = atoi(argv[2]);
 	seed = clock();
+	k = atoi(argv[3]);
 
-	iterateTests(250,maxN, numTimes);
-	iterateTests(10,maxN, numTimes);
-	iterateTests(50,maxN, numTimes);
+	printf("N:Algorithm:Time\n");
+
+	iterateTests(250,maxN,k,numTimes);
+	iterateTests(10,maxN,k,numTimes);
+	iterateTests(50,maxN,k,numTimes);
 }
