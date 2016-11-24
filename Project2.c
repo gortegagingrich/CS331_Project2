@@ -15,6 +15,7 @@ int algorithm2Rec_rec(short*,int,int,int,int);
 const unsigned int MAX_N = 0x7FFFFFFF;
 
 clock_t seed;
+float sum;
 
 // Project specific algorithms
 
@@ -198,13 +199,12 @@ void fillArr(short* list, unsigned int length) {
 
 // misc
 void calcTime(clock_t start, clock_t end) {
-	printf(":%f\n", (float)(end - start) / 1000000.0 );
+	sum += (end - start) / 1000000.0;
 }
 
 void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	srand(seed);
 	fillArr(list,n);
-	printf("-Algorithm%d", algNumber);
 
 	switch (algNumber) {
 		case 1:
@@ -230,11 +230,15 @@ void iterateTests(int start, int maxN, int k, int numTimes) {
 		short* list;
 		list = malloc(sizeof(short) * i);
 
-		for (j = 0; j < numTimes; j++) {
-			for (l = 1; l <= 4; l++) {
-				printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
-				performTest(l,list,i,k);
+		for (l = 1; l <= 4; l++) {
+			sum = 0;
+			printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
+
+			for (j = 0; j < numTimes; j++) {
+					performTest(l,list,i,k);
 			}
+
+			printf("-Algorithm%d:%f\n", l, (sum/numTimes));
 		}
 
 		free(list);
