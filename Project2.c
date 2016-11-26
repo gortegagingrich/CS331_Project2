@@ -15,7 +15,7 @@ int algorithm2Rec_rec(short*,int,int,int,int);
 const unsigned int MAX_N = 0x7FFFFFFF;
 
 clock_t seed;
-float sum;
+float totalTime;
 
 // Project specific algorithms
 
@@ -75,6 +75,7 @@ int algorithm2Rec_init(short* arr, int length, int k) {
 	return out;
 }
 
+/* the actual recursive part of the algorithm */
 int algorithm2Rec_rec(short* arr, int length, int k, int a, int b) {
 	int pivot, out;
 
@@ -91,7 +92,7 @@ int algorithm2Rec_rec(short* arr, int length, int k, int a, int b) {
 
 /* Algorithm 3 is almost exactly the same as algorithm 2.
  * The only difference is that before it calls partition,
- * it swaps the middle and right indeces.
+ * it swaps the middle and right indexes.
  */
 int algorithm3(short* arr, int length, int k) {
 	int pivot, out, a, b;
@@ -106,11 +107,11 @@ int algorithm3(short* arr, int length, int k) {
 
 		pivot = partition(arr,a,b);
 
-		if (pivot == k) {
+		if (pivot == k) { // exit loop if the pivot points to kth element
 			break;
-		} else if (pivot < k) {
+		} else if (pivot < k) { // look at sub array to the right if pivot < k
 			a = pivot + 1;
-		} else {
+		} else { // look at sub array to the left otherwise
 			b = pivot - 1;
 		}
 	}
@@ -163,6 +164,7 @@ void merge(short* arr, short* left, int lLength, short*right, int rLength) {
 	}
 }
 
+/* partition method for quicksort */
 int partition(short* arr, int p, int r) {
 	int x, i, j;
 
@@ -189,6 +191,7 @@ void swap(short* a, short* b) {
 	*b = temp;
 }
 
+/* fills the array with pseudo-random integers */
 void fillArr(short* list, unsigned int length) {
 	unsigned int i;
 
@@ -198,10 +201,14 @@ void fillArr(short* list, unsigned int length) {
 }
 
 // misc
+/* adds the duration of the previous test to static variable totalTime */
 void calcTime(clock_t start, clock_t end) {
-	sum += (end - start) / 1000000.0;
+ totalTime += (end - start) / 1000000.0;
 }
 
+/**
+ * Resets seed, fills the array, and runs given algorithm with given parameters
+ */
 void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	srand(seed);
 	fillArr(list,n);
@@ -222,23 +229,34 @@ void performTest(int algNumber, short* list, unsigned int n, unsigned int k) {
 	}
 }
 
+/**
+ * Takes care of allocating and deallocating memory for the array
+ * and calling all required functions to prepare for and to perform
+ * the tests.  Also handles formatting the output.
+ */
 void iterateTests(int start, int maxN, int k, int numTimes) {
-	int i, j, l;
+	int i, j, algorithm;
 
+	// iterates for each array size
 	for (i = start; i <= maxN && i <= MAX_N; i *= 10) {
 
+		// allocates memory for the array
+		// malloc is used instead of calloc because the values do not need
+		// to be initialized
 		short* list;
 		list = malloc(sizeof(short) * i);
 
-		for (l = 1; l <= 4; l++) {
-			sum = 0;
+		// iterates for each algorithm tested
+		for (algorithm = 1; algorithm <= 4; algorithm++) {
+		 totalTime = 0;
 			printf("%d:%.2f", i, (k == 0 ? 0. : (k / 4.)));
 
+			// runs the algorithm N times
 			for (j = 0; j < numTimes; j++) {
-					performTest(l,list,i,k);
+					performTest(algorithm,list,i,k);
 			}
 
-			printf("-Algorithm%d:%f\n", l, (sum/numTimes));
+			printf("-Algorithm%d:%f\n", algorithm,  totalTime/numTimes);
 		}
 
 		free(list);
@@ -247,15 +265,15 @@ void iterateTests(int start, int maxN, int k, int numTimes) {
 
 // main function
 int main(int argc, char **argv) {
-	// i and maxN need to be unsigned to prevent segfaults caused by overflows
 	unsigned int i, maxN;
-	int j, numTimes, k, l;
+	int j, numTimes, k;
 
 	numTimes = atoi(argv[1]);
 	maxN = atoi(argv[2]);
-	seed = clock();
+	seed = 5;
 	k = atoi(argv[3]);
 
+	// print out header to make building a table in Grapher.r easier
 	printf("N:Algorithm:Time\n");
 
 	iterateTests(250,maxN,k,numTimes);
