@@ -6,6 +6,11 @@
 void mergesort(short*,int,int);
 void merge(short*,short*,int,short*,int);
 int partition(short*,int,int);
+
+int mmPartition(short*, int, int, int);
+short findMedian(short*, int);
+int algorithm3_rec(short*, int, int, int);
+
 void swap(short*, short*);
 void fillArr(short*, unsigned int);
 void calcTime(clock_t, clock_t);
@@ -91,35 +96,82 @@ int algorithm2Rec_rec(short* arr, int length, int k, int a, int b) {
 }
 
 /* Algorithm 3 is almost exactly the same as algorithm 2.
- * The only difference is that before it calls partition,
- * it swaps the middle and right indexes.
+ * The only difference is that partitions around the median of median values
  */
 int algorithm3(short* arr, int length, int k) {
 	int pivot, out, a, b;
 	clock_t start;
 
 	start = clock();
-	a = 0;
-	b = length - 1;
-
-	for (;;) {
-		swap(&arr[(a + b) / 2], &arr[b]);
-
-		pivot = partition(arr,a,b);
-
-		if (pivot == k) { // exit loop if the pivot points to kth element
-			break;
-		} else if (pivot < k) { // look at sub array to the right if pivot < k
-			a = pivot + 1;
-		} else { // look at sub array to the left otherwise
-			b = pivot - 1;
-		}
-	}
-
-	out = arr[pivot];
+	out = algorithm3_rec(arr,0,length-1,k);
 	calcTime(start,clock());
 
 	return out;
+}
+
+int algorithm3_rec(short* arr, int left, int right, int k) {
+	unsigned int n, i, pivot;
+	short mm;
+
+	if (k > 0 && k < right - left + 1) {
+		n = right - left + 1;
+		short *median = (short*)malloc(sizeof(short)*(n+4)/5);
+
+		for (i = 0; i < n/5; i++) {
+			median[i] = findMedian(arr+left+i*5, 5);
+		}
+
+		if (i*5 < n) {
+			median[i] = findMedian(arr+left+i*5, n%5);
+			i++;
+		}
+
+		if (i == 1) {
+			mm = median[i-1];
+		} else {
+			mm = algorithm3_rec(median, 0, i-1, i/2);
+		}
+
+		free(median);
+
+		pivot = mmPartition(arr, left, right, mm);
+
+		if (pivot-left == k-1) {
+			return arr[pivot];
+		} else if (pivot-left > k-1) {
+			return algorithm3_rec(arr, left, pivot-1, k);
+		} else {
+			return algorithm3_rec(arr, pivot+1, right, k-pivot+left - 1);
+		}
+	}
+}
+
+short findMedian(short* arr, int n) {
+	mergesort(arr, 0, n);
+	return arr[n/2];
+}
+
+int mmPartition(short* arr, int left, int right, int med) {
+	int i, j;
+
+	for (i = left; i < right; i++) {
+		if (arr[i] == med) {
+			break;
+		}
+	}
+
+	swap(&arr[i], &arr[right]);
+
+	i = left;
+	for (j = left; j < right; j++) {
+		if (arr[j] <= med) {
+			swap(&arr[i], &arr[j]);
+			i++;
+		}
+	}
+
+	swap(&arr[i], &arr[right]);
+	return i;
 }
 
 // Array functions
