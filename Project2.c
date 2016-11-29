@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdint.h>
 
-void mergesort(short*,int,int);
+void mergesort(short*,int);
 void merge(short*,short*,int,short*,int);
 int partition(short*,int,int);
 
@@ -32,7 +32,7 @@ int algorithm1 (short* arr, int length, int k) {
 	int out;
 
 	start = clock();
-	mergesort(arr,0,length-1);
+	mergesort(arr,length);
 	out = arr[k];
 	calcTime(start,clock());
 
@@ -99,7 +99,7 @@ int algorithm2Rec_rec(short* arr, int length, int k, int a, int b) {
  * The only difference is that partitions around the median of median values
  */
 int algorithm3(short* arr, int length, int k) {
-	int pivot, out, a, b;
+	int out;
 	clock_t start;
 
 	start = clock();
@@ -113,9 +113,10 @@ int algorithm3_rec(short* arr, int left, int right, int k) {
 	unsigned int n, i, pivot;
 	short mm;
 
-	if (k > 0 && k < right - left + 1) {
+	if (k > 0 && k <= right - left + 1) {
 		n = right - left + 1;
-		short *median = (short*)malloc(sizeof(short)*(n+4)/5);
+
+		short *median = (short*)malloc(((n+4)/5)*sizeof(short));
 
 		for (i = 0; i < n/5; i++) {
 			median[i] = findMedian(arr+left+i*5, 5);
@@ -147,7 +148,7 @@ int algorithm3_rec(short* arr, int left, int right, int k) {
 }
 
 short findMedian(short* arr, int n) {
-	mergesort(arr, 0, n);
+	mergesort(arr, n);
 	return arr[n/2];
 }
 
@@ -175,21 +176,34 @@ int mmPartition(short* arr, int left, int right, int med) {
 }
 
 // Array functions
-void mergesort(short* arr, int a, int b) {
+void mergesort(short* arr, int n) {
 	int mid, i;
 	short *left, *right;
 
-	if ((b-a) >= 2) {
-		mid = (a + b) / 2;
-
-		left = (short*)malloc((mid-a)*sizeof(short));
-		right = (short*)malloc((b-mid)*sizeof(short));
-
-		merge(arr,left,mid-a,right,b-mid);
-
-		free(left);
-		free(right);
+	if (n < 2) {
+		return;
 	}
+
+	mid = n / 2;
+
+	left = (short*)malloc(mid*sizeof(short));
+	right = (short*)malloc((n-mid)*sizeof(short));
+
+	for (i = 0; i < mid; i++) {
+		left[i] = arr[i];
+	}
+
+	for (i = mid; i < n; i++) {
+		right[i-mid] = arr[i];
+	}
+
+	mergesort(left, mid);
+	mergesort(right, n-mid);
+
+	merge(arr,left,mid,right,n-mid);
+
+	free(left);
+	free(right);
 }
 
 void merge(short* arr, short* left, int lLength, short*right, int rLength) {
@@ -207,12 +221,12 @@ void merge(short* arr, short* left, int lLength, short*right, int rLength) {
 		}
 	}
 
-	for (;i < lLength; i++) {
-		arr[k++] = left[i];
+	while (i < lLength) {
+		arr[k++] = left[i++];
 	}
 
-	for (;j < rLength; j++) {
-		arr[k++] = right[j];
+	while (j < rLength) {
+		arr[k++] = right[j++];
 	}
 }
 
