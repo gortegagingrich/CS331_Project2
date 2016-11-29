@@ -26,6 +26,8 @@ float totalTime;
 
 /* Algorithm 1 works by sorting the given array (using merge sort)
  * and returning the kth term.
+ *
+ * Select-kth 1
  */
 int algorithm1 (short* arr, int length, int k) {
 	clock_t start, end;
@@ -41,6 +43,8 @@ int algorithm1 (short* arr, int length, int k) {
 
 /* Algorithm 2 works by using the partition method from quicksort
  * until the pivot is equal to k and returning the kth term.
+ *
+ * Select-kth 2
  */
 int algorithm2(short* arr, int length, int k) {
 	clock_t start;
@@ -68,7 +72,10 @@ int algorithm2(short* arr, int length, int k) {
 	return out;
 }
 
-/* Recursive implementation of Algorithm 2 */
+/* Recursive implementation of Algorithm 2 
+ * 
+ * Select-kth 3
+ */
 int algorithm2Rec_init(short* arr, int length, int k) {
 	clock_t start;
 	int out;
@@ -97,10 +104,16 @@ int algorithm2Rec_rec(short* arr, int length, int k, int a, int b) {
 
 /* Algorithm 3 is almost exactly the same as algorithm 2.
  * The only difference is that partitions around the median of median values
+ *
+ * Select-kth 4
  */
 int algorithm3(short* arr, int length, int k) {
 	int out;
 	clock_t start;
+
+	if (k == 0) {
+		k = 1;
+	}
 
 	start = clock();
 	out = algorithm3_rec(arr,0,length-1,k);
